@@ -104,7 +104,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         // Создаём таймер на 30 секунд
-        timer = object : CountDownTimer(30000, 1000) { // 30 секунд, tick каждую секунду
+        timer = object : CountDownTimer(3000, 100) { // 30 секунд, tick каждую секунду
             override fun onTick(millisUntilFinished: Long) {
                 // Лог для отображения оставшегося времени (необязательно)
                 println("Time left: ${millisUntilFinished / 1000} seconds")

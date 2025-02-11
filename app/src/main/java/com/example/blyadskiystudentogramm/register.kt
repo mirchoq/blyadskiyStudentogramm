@@ -2,7 +2,6 @@ package com.example.blyadskiystudentogramm
 
 import android.content.Intent
 import android.os.Bundle
-import android.provider.ContactsContract.CommonDataKinds.Email
 import android.view.View
 import android.widget.EditText
 import android.widget.Toast
@@ -10,63 +9,109 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 
 class register : AppCompatActivity() {
-    lateinit var email: EditText
-    lateinit var pass: EditText
+
+    private lateinit var email: EditText
+    private lateinit var pass: EditText
+    private lateinit var auth: FirebaseAuth
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_register)
+
+        // Обработка системных окон (insets)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+
+        // Инициализация Firebase Auth
+        auth = FirebaseAuth.getInstance()
+
+        // Инициализация полей
         email = findViewById(R.id.Email)
         pass = findViewById(R.id.passwordd)
+
+        // Принудительный выход из системы и очистка кэша
+        auth.signOut()
+        clearAuthCache()
     }
 
+    override fun onStart() {
+        super.onStart()
+        // Проверка текущего пользователя при старте активности
+        val currentUser = auth.currentUser
+        if (currentUser != null) {
+            // Если пользователь найден, выходим из системы
+            auth.signOut()
+            Toast.makeText(this, "Обнаружена предыдущая сессия. Войдите снова.", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    // Очистка кэша аутентификации
+    private fun clearAuthCache() {
+        auth.signOut()
+        auth.currentUser?.delete()?.addOnCompleteListener {
+            if (it.isSuccessful) {
+                Toast.makeText(this, "Кэш аутентификации очищен", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    // Обработка нажатия кнопки входа
     fun Enter(view: View) {
         login()
     }
-    fun login(){
-        if (email.text.isNotEmpty() and pass.text.isNotEmpty()){
-            val email = email.text.toString()
-            val pass = pass.text.toString()
-            FirebaseAuth.getInstance().signInWithEmailAndPassword(email,pass)
-                .addOnSuccessListener {
-                    Toast.makeText(baseContext, "Добро пожаловать",Toast.LENGTH_LONG).show()
-                    val per = Intent(this@register, main_menu::class.java)
-                    startActivity(per)
+
+    // Метод входа
+    private fun login() {
+        val emailText = email.text.toString().trim()
+        val passText = pass.text.toString().trim()
+
+        if (emailText.isEmpty() || passText.isEmpty()) {
+            Toast.makeText(this, "Заполните все поля", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        auth.signInWithEmailAndPassword(emailText, passText)
+            .addOnSuccessListener {
+                // Проверяем, что вход выполнен успешно
+                if (auth.currentUser != null) {
+                    Toast.makeText(this, "Добро пожаловать", Toast.LENGTH_SHORT).show()
+                    startActivity(Intent(this, main_menu::class.java))
                     finish()
+                } else {
+                    Toast.makeText(this, "Ошибка: пользователь не найден", Toast.LENGTH_SHORT).show()
                 }
-                .addOnFailureListener { Toast.makeText(baseContext,"ой ой, не нашли польвователя :(", Toast.LENGTH_LONG).show() }
-
-        }
-        else {
-            Toast.makeText(baseContext,"jj",Toast.LENGTH_LONG).show()
-
-        }
+            }
+            .addOnFailureListener { e ->
+                Toast.makeText(this, "Ошибка входа: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
     }
 
+    // Обработка нажатия кнопки регистрации
     fun Reg(view: View) {
-        if (email.text.isNotEmpty() and pass.text.isNotEmpty()){
-            val email = email.text.toString()
-            val pass = pass.text.toString()
-            FirebaseAuth.getInstance().createUserWithEmailAndPassword(email,pass)
-                .addOnSuccessListener {
-                    Toast.makeText(baseContext, "Регистрация успешная",Toast.LENGTH_LONG).show()
-                    login()
-                }
-                .addOnFailureListener { Toast.makeText(baseContext,"404", Toast.LENGTH_LONG).show() }
+        val emailText = email.text.toString().trim()
+        val passText = pass.text.toString().trim()
 
+        if (emailText.isEmpty() || passText.isEmpty()) {
+            Toast.makeText(this, "Заполните все поля", Toast.LENGTH_SHORT).show()
+            return
         }
-        else {
 
-        Toast.makeText(baseContext,"jj",Toast.LENGTH_LONG).show()
-        }
+        auth.createUserWithEmailAndPassword(emailText, passText)
+            .addOnSuccessListener {
+                // После регистрации выходим из системы и очищаем кэш
+                auth.signOut()
+                clearAuthCache()
+                Toast.makeText(this, "Регистрация успешна. Войдите в систему.", Toast.LENGTH_SHORT).show()
+            }
+            .addOnFailureListener { e ->
+                Toast.makeText(this, "Ошибка регистрации: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
     }
 }
