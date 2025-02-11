@@ -15,10 +15,13 @@ import android.view.View
 import android.view.animation.Animation
 import android.view.animation.RotateAnimation
 import android.view.animation.LinearInterpolator
+import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
 
 class MainActivity : AppCompatActivity() {
     private lateinit var timer: CountDownTimer // Таймер
     private val rotationDuration = 30000L // 30 секунд (в миллисекундах)
+    var Boolean:Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,6 +63,11 @@ class MainActivity : AppCompatActivity() {
         val imageView4 = findViewById<ImageView>(R.id.imageView4)
 
         // Запускаем таймер и анимации
+        val curUset = FirebaseAuth.getInstance().currentUser
+        if (curUset != null){
+            Boolean = true
+        }
+
         startTimerAndAnimations(imageView2, imageView3, imageView4)
     }
 
@@ -110,8 +118,14 @@ class MainActivity : AppCompatActivity() {
 
                 // Переход на activity_register после завершения таймера
                 println("Timer finished! Starting RegisterActivity...")
-                startActivity(Intent(this@MainActivity, register::class.java))
-                finish() // Закрываем текущую активность
+                if (Boolean){
+                    startActivity(Intent(this@MainActivity, main_menu::class.java))
+                    finish()
+                }
+                else{
+                    startActivity(Intent(this@MainActivity, register::class.java))
+                    finish()
+                }
             }
         }.start()
 
