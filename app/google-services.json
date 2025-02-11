@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "747577847121",
+    "project_id": "student-ed8c4",
+    "storage_bucket": "student-ed8c4.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:747577847121:android:17dd8ffb11464641d57770",
+        "android_client_info": {
+          "package_name": "com.example.blyadskiystudentogramm"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDF450Px2I-lzRoksvEgti5xVVB9sDZxj8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
