@@ -19,7 +19,8 @@ class main_menu : AppCompatActivity() {
         binding = ActivityMainMenuBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-
-
+        val  nav :BottomNavigationView = binding.navView
+        val ff = findNavController(R.id.nav_host_fragment_activity_main_menu)
+        nav.setupWithNavController(ff)
     }
 }

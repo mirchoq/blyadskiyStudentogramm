@@ -11,6 +11,7 @@ import androidx.core.view.WindowInsetsCompat
 import android.widget.TextView
 import android.widget.ImageView
 import android.content.Intent
+import android.util.Log
 import android.view.View
 import android.view.animation.Animation
 import android.view.animation.RotateAnimation
@@ -27,6 +28,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         // Устанавливаем разметку
         setContentView(R.layout.activity_main)
+        // Проверяем, нужно ли показывать DashboardFragment
+
 
         // Находим TextView
         val textView3 = findViewById<TextView>(R.id.textView3)
@@ -63,9 +66,20 @@ class MainActivity : AppCompatActivity() {
         val imageView4 = findViewById<ImageView>(R.id.imageView4)
 
         // Запускаем таймер и анимации
+
+
         val curUset = FirebaseAuth.getInstance().currentUser
-        if (curUset != null){
-            Boolean = true
+        curUset?.reload()?.addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                Log.e("LOX", ""+Boolean)
+                Boolean = true
+                Log.e("LOX", ""+Boolean)
+            }
+            else{
+                Log.e("LOX", ""+Boolean)
+                Boolean = false
+                Log.e("LOX", ""+Boolean)
+            }
         }
 
         startTimerAndAnimations(imageView2, imageView3, imageView4)
@@ -119,10 +133,12 @@ class MainActivity : AppCompatActivity() {
                 // Переход на activity_register после завершения таймера
                 println("Timer finished! Starting RegisterActivity...")
                 if (Boolean){
+                    Log.e("LOX", ""+Boolean)
                     startActivity(Intent(this@MainActivity, main_menu::class.java))
                     finish()
                 }
                 else{
+                    Log.e("LOX", ""+Boolean)
                     startActivity(Intent(this@MainActivity, register::class.java))
                     finish()
                 }
@@ -140,7 +156,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     * Запускает анимацию вращения для ImageView
+     * Запускает анимацию вращения для ImageView 
      */
     private fun startRotationAnimation(imageView: ImageView, clockwise: Boolean, duration: Long) {
         val fromDegrees = if (clockwise) 0f else 360f

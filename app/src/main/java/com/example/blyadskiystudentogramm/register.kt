@@ -2,6 +2,7 @@ package com.example.blyadskiystudentogramm
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.EditText
 import android.widget.Toast
@@ -51,6 +52,9 @@ class register : AppCompatActivity() {
             Toast.makeText(this, "Обнаружена предыдущая сессия. Войдите снова.", Toast.LENGTH_SHORT).show()
         }
     }
+
+
+
 
     // Очистка кэша аутентификации
     private fun clearAuthCache() {
@@ -103,12 +107,13 @@ class register : AppCompatActivity() {
             return
         }
 
+        // Регистрация нового пользователя
         auth.createUserWithEmailAndPassword(emailText, passText)
             .addOnSuccessListener {
-                // После регистрации выходим из системы и очищаем кэш
-                auth.signOut()
-                clearAuthCache()
-                Toast.makeText(this, "Регистрация успешна. Войдите в систему.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Регистрация успешна!", Toast.LENGTH_SHORT).show()
+                // Переход на главную страницу после регистрации
+                startActivity(Intent(this, main_menu::class.java))
+                finish()
             }
             .addOnFailureListener { e ->
                 Toast.makeText(this, "Ошибка регистрации: ${e.message}", Toast.LENGTH_SHORT).show()

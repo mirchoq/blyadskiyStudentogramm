@@ -1,37 +1,49 @@
-package com.example.blyadskiystudentogramm.ui.dashboard
+package com.example.blyadskiystudentogramm
 
-import android.content.Intent
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
-import com.example.blyadskiystudentogramm.R
 import com.example.blyadskiystudentogramm.databinding.FragmentDashboardBinding
-import com.example.blyadskiystudentogramm.register
-import com.google.firebase.Firebase
-import com.google.firebase.auth.FirebaseAuth
 
 class DashboardFragment : Fragment() {
+
+    private var _binding: FragmentDashboardBinding? = null
+    private val binding get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?,
+        savedInstanceState: Bundle?
     ): View {
-
-
-
-        val root = inflater.inflate(R.layout.fragment_dashboard, container, false)
-
-        return root
+        // Инициализация разметки через ViewBinding
+        _binding = FragmentDashboardBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
-    fun Por(view: View) {
-        FirebaseAuth.getInstance().signOut()
-        startActivity(Intent(context, register::class.java))
-        requireActivity().finish()
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        // Проверяем, нужно ли показывать приветственное сообщение
+        val sharedPreferences = requireActivity().getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+        val isFirstLogin = sharedPreferences.getBoolean("is_first_login", true)
+
+        if (isFirstLogin) {
+            // Показываем приветственное сообщение
+
+
+            // Сохраняем информацию о том, что пользователь уже вошёл
+            sharedPreferences.edit().putBoolean("is_first_login", false).apply()
+        } else {
+            // Если это не первый вход, скрываем фрагмент
+            parentFragmentManager.beginTransaction().remove(this).commit()
+        }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }
