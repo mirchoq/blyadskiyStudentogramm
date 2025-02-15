@@ -8,6 +8,9 @@ android {
     namespace = "com.example.blyadskiystudentogramm"
     compileSdk = 35
 
+
+
+
     defaultConfig {
         applicationId = "com.example.blyadskiystudentogramm"
         minSdk = 24
@@ -17,6 +20,8 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
+        viewBinding {
+            enable = true }
 
     buildTypes {
         release {
